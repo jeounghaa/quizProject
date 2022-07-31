@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.quizproject.gameAType.GameAMapper" >
+    <insert id="insertGame">
+        INSERT INTO GAME(gId, title, intro, type, uid, firstDt, lastDt)
+        VALUES (#{gId}, #{title}, #{intro}, 'quizA', (SELECT uId FROM USER WHERE id=#{uId}), now(), now())
+    </insert>
+
+    <insert id="insertGameItem1">
+        INSERT INTO GAMEITEM(giId, serial, subTitle, content, score, gId, firstDt, lastDt)
+        VALUES ((SELECT IFNULL(MAX(giId)+1, 1) FROM GAMEITEM as a), #{count}, #{subTitle}, #{content1}, #{score1}, #{gId}, now(), now())
+    </insert>
+
+    <insert id="insertGameItem2">
+        INSERT INTO GAMEITEM(giId, serial, subTitle, content, score, gId, firstDt, lastDt)
+        VALUES ((SELECT IFNULL(MAX(giId)+1, 1) FROM GAMEITEM as a), #{count}, #{subTitle}, #{content2}, #{score2}, #{gId}, now(), now())
+    </insert>
+
+    <insert id="insertResult">
+        INSERT INTO RESULT(gId, value, serial)
+        VALUES (#{gId}, #{value1}, 1), (#{gId}, #{value2}, 2)
+    </insert>
+
+    <select id="selectGID" resultType="Integer">
+        SELECT IFNULL(max(gId), 0) FROM GAME
+    </select>
+
+    <select id="selectList" resultType="GameAVO">
+        SELECT gId, title, intro, thumbnail, type, uId FROM GAME
+    </select>
+
+    <select id="selectGame" parameterType="Integer" resultType="GameAVO">
+        SELECT title, intro, thumbnail FROM GAME WHERE gId = #{gId}
+    </select>
+
+    <select id="selectGameItem" parameterType="Integer" resultType="GameItemAVO">
+        SELECT * FROM GAMEITEM WHERE gId = #{gId}
+    </select>
+</mapper>
+
+

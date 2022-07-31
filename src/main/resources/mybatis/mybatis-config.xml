@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <mappers>
+<<<<<<< HEAD
+        <mapper resource="UserMapper.xml"/>
+        <mapper resource="GameBMapper.xml"/>
+        <mapper resource="GameAMapper.xml"/>
+=======
+        <mapper resource="userMapper.xml"/>
+        <mapper resource="gameBMapper.xml"/>
+        <mapper resource="playBMapper.xml"/>
+>>>>>>> 0a8ea993654eee1920c7c36369dd88058c3e4527
+    </mappers>
+</configuration>

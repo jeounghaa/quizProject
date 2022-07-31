@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.quizproject.gameB.GameBMapper" >
+    <insert id="insertGame" parameterType="gameVO">
+        <selectKey keyProperty="gId" resultType="int" order="BEFORE">
+            SELECT IFNULL(MAX(gId), 0) + 1 FROM GAME
+        </selectKey>
+        INSERT INTO GAME(
+            gId,
+            title,
+            intro,
+            type,
+            uId,
+            firstDt,
+            lastDt
+        ) VALUES (
+            #{gId},
+            #{title},
+            #{intro},
+            #{type},
+            #{uId},
+            DATE_FORMAT(NOW(), '%Y%m%d%H%I%S'),
+            DATE_FORMAT(NOW(), '%Y%m%d%H%I%S')
+        )
+
+    </insert>
+
+    <insert id="insertGameItem" parameterType="GameItemVO">
+        <selectKey keyProperty="giId" resultType="int" order="BEFORE">
+            SELECT IFNULL(MAX(giId), 0) + 1 FROM GAMEITEM
+        </selectKey>
+
+        INSERT INTO GAMEITEM(
+            giId,
+            serial,
+            subTitle,
+            content,
+            <if test="img != null">
+                img,
+            </if>
+            <if test="answer != null">
+                answer,
+            </if>
+            score,
+            gId,
+            firstDt,
+            lastDt
+        ) VALUES (
+            #{giId},
+            #{serial},
+            #{subTitle},
+            #{content},
+            <if test="img != null">
+                #{img},
+            </if>
+            <if test="answer != null">
+                #{answer},
+            </if>
+            #{score},
+            #{gId},
+            DATE_FORMAT(NOW(), '%Y%m%d%H%I%S'),
+            DATE_FORMAT(NOW(), '%Y%m%d%H%I%S')
+        )
+    </insert>
+</mapper>

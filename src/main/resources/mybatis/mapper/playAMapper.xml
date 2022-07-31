@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.quizproject.playAType.PlayAMapper" >
+    <insert id="insertPlay" parameterType="PlayAVO">
+        <selectKey keyProperty="pId" resultType="INTEGER" order="BEFORE">
+            SELECT IFNULL(MAX(pId)+1, 1) FROM PLAY as a
+        </selectKey>
+        INSERT INTO PLAY
+            (pId,
+             state, gId,
+             uId,
+             firstDt, lastDt)
+        VALUES
+            (#{pId},
+             "진행 중", #{gId},
+             (SELECT uId FROM USER WHERE id=#{uId}),
+             now(), now())
+    </insert>
+    <insert id="insertPlayItem" parameterType="PlayItemAVO">
+        <selectKey keyProperty="piId" resultType="INTEGER" order="BEFORE">
+            SELECT IFNULL(MAX(piId)+1, 1) FROM PLAYITEM as a
+        </selectKey>
+        INSERT INTO PLAYITEM
+            (piId,
+             answer, pId, giId, serial, firstDt, lastDt)
+        VALUES
+            (#{piId}, #{answer1}, #{pId}, #{giId1}, 1, now(), now()),
+            (#{piId}+1, #{answer2}, #{pId}, #{giId2}, 2, now(), now()),
+            (#{piId}+2, #{answer3}, #{pId}, #{giId3}, 3, now(), now())
+    </insert>
+    <select id="selectResult" parameterType="INTEGER" resultType="ResultAVO">
+        SELECT COUNT(*) AS score, D.value AS value1
+          FROM PLAYITEM AS A
+            INNER JOIN PLAY AS B
+                    ON B.pId = A.pId
+            INNER JOIN GAMEITEM AS C
+                    ON B.gId = C.gId
+                   AND A.giId = C.giId
+            LEFT JOIN RESULT AS D
+                    ON D.gId = B.gId
+                   AND D.serial = C.score
+        WHERE A.pId = #{pId}
+        GROUP BY C.score
+        ORDER BY score DESC
+        LIMIT 1
+    </select>
+    <update id="updatePlay" parameterType="INTEGER">
+        UPDATE PLAY
+        SET state = "완료"
+        WHERE pId = #{pId}
+    </update>
+</mapper>
+
+

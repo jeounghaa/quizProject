@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.quizproject.playB.PlayBMapper" >
+    <select id="selectGameList" resultType="gameVO">
+        SELECT * FROM GAME
+    </select>
+
+    <insert id="insertPlay" parameterType="playVO">
+        <selectKey keyProperty="pId" resultType="int" order="BEFORE">
+            SELECT IFNULL(MAX(pId), 0) + 1 FROM PLAY
+        </selectKey>
+
+        INSERT INTO PLAY VALUES
+             (
+                 #{pId},
+                 #{state},
+                 #{gId},
+                 #{uId},
+                 DATE_FORMAT(NOW(), '%Y%m%d%H%I%S'),
+                 DATE_FORMAT(NOW(), '%Y%m%d%H%I%S')
+             )
+    </insert>
+
+    <select id="selectGameItem" resultType="gameItemVO">
+        SELECT * FROM GAMEITEM
+        WHERE gId = #{gId}
+        AND serial = #{serial}
+    </select>
+
+    <insert id="insertPlayItem" parameterType="playItemVO">
+        <selectKey keyProperty="piId" resultType="int" order="BEFORE">
+            SELECT IFNULL(MAX(piId), 0) + 1 FROM PLAYITEM
+        </selectKey>
+
+        INSERT INTO PLAYITEM VALUES
+            (
+            #{piId},
+            #{answer},
+            #{pId},
+            #{giId},
+            #{serial},
+            DATE_FORMAT(NOW(), '%Y%m%d%H%I%S'),
+            DATE_FORMAT(NOW(), '%Y%m%d%H%I%S')
+            )
+    </insert>
+
+    <select id="selectPlayResult" parameterType="int" resultType="resultVO">
+        SELECT
+            COUNT(CASE WHEN G.answer = 'Y' THEN 'O' END) AS GOOD,
+            COUNT(CASE WHEN G.answer = 'N' THEN 'X' END) AS BAD,
+            SUM(CASE WHEN G.answer = 'Y' THEN score END) AS TOTAL
+        FROM PLAYITEM P
+        INNER JOIN GAMEITEM G
+        ON P.giId = G.giId
+        WHERE P.pId = #{pId}
+    </select>
+</mapper>
